@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Công thức và luyện đề lớp 1 đến 12</title>
+<style>
+:root{--bg:#f5f5f5;--card:#fff;--ink:#111;--mute:#666;--line:#d4d4d4;--btn:#111;--on-btn:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111;--card:#1b1b1b;--ink:#eee;--mute:#999;--line:#333;--btn:#eee;--on-btn:#111}}
+:root[data-theme="dark"]{--bg:#111;--card:#1b1b1b;--ink:#eee;--mute:#999;--line:#333;--btn:#eee;--on-btn:#111}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 100px}
+h1{font-size:1.5rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 16px}
+button{font:inherit;font-size:.95rem;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:6px;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.primary{background:var(--btn);color:var(--on-btn);border-color:var(--btn)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.grades{display:flex;flex-wrap:wrap;gap:8px}
+.grades button[aria-pressed="true"]{background:var(--btn);color:var(--on-btn);border-color:var(--btn)}
+.count{color:var(--mute);margin:12px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:12px}
+.card h2{font-size:1.05rem;margin:0}
+.subj{color:var(--mute);font-size:.85rem;margin:0 0 4px}
+.f{font:600 1.35rem/1.5 Georgia,"Times New Roman",serif;margin:8px 0;overflow-x:auto}
+.m{color:var(--mute);font-size:.92rem;margin:0 0 12px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.score{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--mute)}
+.tally{display:flex;gap:3px}
+.tally i{display:block;width:10px;height:10px;border:1px solid var(--ink);border-radius:2px}
+.tally i.y{background:var(--ink)}
+.q{font-size:1.1rem;margin:12px 0}
+.ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);width:150px}
+.res{margin:12px 0;min-height:1.5em}
+.res b{margin-right:6px}
+[hidden]{display:none!important}
+.lbl{color:var(--mute);font-size:.85rem;margin:14px 0 6px}
+#acct ul{margin:8px 0 14px;padding-left:20px}
+#acct .ans{margin-top:8px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{border:0;border-radius:0;background:transparent;color:var(--mute);padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.78rem}
+nav button[aria-current="page"]{color:var(--ink);font-weight:700}
+nav svg{width:22px;height:22px}
+</style>
+</head>
+<body>
+<main>
+<h1 id="ttl">Công thức</h1>
+<p class="sub" id="sub">Chọn lớp, xem công thức rồi làm đề tự sinh.</p>
+
+<div id="home">
+  <div class="grades" id="grades" role="group" aria-label="Chọn lớp"></div>
+  <p class="count" id="count"></p>
+  <div id="list"></div>
+</div>
+
+<div id="practice" hidden>
+  <div class="bar"><button id="back">Quay lại</button><div class="score"><span id="score"></span><span class="tally" id="tally" aria-hidden="true"></span></div></div>
+  <div class="card">
+    <h2 id="pt"></h2><p class="subj" id="ps"></p>
+    <div class="f" id="pf"></div>
+    <p class="q" id="pq"></p>
+    <div class="ans"><input id="in" inputmode="decimal" autocomplete="off" aria-label="Đáp án"><span id="pu"></span><button id="chk" class="primary">Kiểm tra</button></div>
+    <p class="res" id="res" aria-live="polite"></p>
+    <button id="nx" hidden>Đề tiếp theo</button>
+  </div>
+</div>
+
+<div id="thsetup" hidden>
+  <p class="lbl">Lớp</p><div class="grades" id="thg"></div>
+  <p class="lbl">Môn</p><div class="grades" id="ths"></div>
+  <p class="count" id="thc"></p>
+  <button class="primary" id="thgo">Bắt đầu luyện tập</button>
+</div>
+
+<div id="acct" hidden>
+  <div class="card">
+    <p id="hello"></p>
+    <div class="ans"><input id="nm" maxlength="40" placeholder="Tên của bạn" aria-label="Tên của bạn"><button id="sv">Lưu tên</button></div>
+  </div>
+  <div class="card">
+    <h2>Tiến độ</h2>
+    <p id="tot"></p>
+    <ul id="bysub"></ul>
+    <button id="rst">Xóa dữ liệu</button>
+  </div>
+  <p class="m">Dữ liệu chỉ lưu trên thiết bị này, trong trình duyệt. Chưa có đăng nhập thật vì web chưa có máy chủ. Muốn có tài khoản thật thì cần thêm máy chủ và cơ sở dữ liệu.</p>
+</div>
+</main>
+
+<nav aria-label="Menu chính">
+  <button data-t="cong" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg><span>Công thức</span></button>
+  <button data-t="th" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/></svg><span>Thực hành</span></button>
+  <button data-t="tk" aria-current="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Tài khoản</span></button>
+</nav>
+
+<script>
+const $=s=>document.querySelector(s);
+const r=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[r(0,a.length-1)];
+const fmt=n=>String(+Number(n).toFixed(2)).replace(".",",");
+const fact=n=>n<2?1:n*fact(n-1);
+
+/* Mỗi công thức là một mục trong danh sách này.
+   Muốn thêm công thức mới: thêm một mục có g (lớp), s (môn), t (tên), f (công thức),
+   m (ý nghĩa) và gen() trả về đề: q (đề), a (đáp án), u (đơn vị), w (cách giải). */
+const F=[
+{g:1,s:"Toán",t:"Phép cộng trong phạm vi 20",f:"a + b = tổng",m:"a và b là hai số hạng. Tổng là kết quả khi gộp hai số lại.",
+ gen(){const a=r(1,12),b=r(1,20-a);return{q:`${a} + ${b} = ?`,a:a+b,u:"",w:`${a} + ${b} = ${a+b}`}}},
+{g:2,s:"Toán",t:"Phép nhân (bảng nhân 2 đến 5)",f:"a × b = tích",m:"Nhân a với b là cộng b lần số a.",
+ gen(){const a=r(2,5),b=r(1,10);return{q:`${a} × ${b} = ?`,a:a*b,u:"",w:`${a} × ${b} = ${a*b}`}}},
+{g:3,s:"Toán",t:"Chu vi hình chữ nhật",f:"P = (a + b) × 2",m:"a là chiều dài, b là chiều rộng (cùng đơn vị).",
+ gen(){const a=r(5,15),b=r(2,a-1);return{q:`Hình chữ nhật dài ${a} cm, rộng ${b} cm. Tính chu vi.`,a:(a+b)*2,u:"cm",w:`P = (${a} + ${b}) × 2 = ${(a+b)*2}`}}},
+{g:4,s:"Toán",t:"Diện tích hình bình hành",f:"S = a × h",m:"a là độ dài đáy, h là chiều cao tương ứng với đáy đó.",
+ gen(){const a=r(4,15),h=r(3,12);return{q:`Hình bình hành có đáy ${a} cm, chiều cao ${h} cm. Tính diện tích.`,a:a*h,u:"cm²",w:`S = ${a} × ${h} = ${a*h}`}}},
+{g:5,s:"Toán",t:"Diện tích hình tam giác",f:"S = (a × h) : 2",m:"a là độ dài đáy, h là chiều cao tương ứng.",
+ gen(){const a=2*r(2,8),h=r(3,12);return{q:`Tam giác có đáy ${a} cm, chiều cao ${h} cm. Tính diện tích.`,a:a*h/2,u:"cm²",w:`S = (${a} × ${h}) : 2 = ${a*h/2}`}}},
+{g:5,s:"Toán",t:"Vận tốc",f:"v = s : t",m:"s là quãng đường, t là thời gian, v là vận tốc.",
+ gen(){const v=r(20,60),t=r(2,6);return{q:`Một xe đi ${v*t} km trong ${t} giờ. Tính vận tốc.`,a:v,u:"km/giờ",w:`v = ${v*t} : ${t} = ${v}`}}},
+{g:6,s:"Toán",t:"Diện tích hình thoi",f:"S = (d<sub>1</sub> × d<sub>2</sub>) : 2",m:"d₁ và d₂ là độ dài hai đường chéo.",
+ gen(){const a=2*r(2,8),b=r(3,12);return{q:`Hình thoi có hai đường chéo dài ${a} cm và ${b} cm. Tính diện tích.`,a:a*b/2,u:"cm²",w:`S = (${a} × ${b}) : 2 = ${a*b/2}`}}},
+{g:7,s:"Toán",t:"Thể tích hình hộp chữ nhật",f:"V = a × b × c",m:"a, b, c là ba kích thước: dài, rộng, cao.",
+ gen(){const a=r(2,8),b=r(2,8),c=r(2,8);return{q:`Hình hộp chữ nhật có ba kích thước ${a} cm, ${b} cm, ${c} cm. Tính thể tích.`,a:a*b*c,u:"cm³",w:`V = ${a} × ${b} × ${c} = ${a*b*c}`}}},
+{g:8,s:"Toán",t:"Định lí Pythagore",f:"c² = a² + b²",m:"Tam giác vuông có hai cạnh góc vuông a, b và cạnh huyền c.",
+ gen(){const[x,y,z]=pick([[3,4,5],[5,12,13],[8,15,17],[6,8,10],[9,12,15],[7,24,25]]);return{q:`Tam giác vuông có hai cạnh góc vuông dài ${x} cm và ${y} cm. Tính cạnh huyền.`,a:z,u:"cm",w:`c² = ${x}² + ${y}² = ${x*x+y*y}, nên c = ${z}`}}},
+{g:8,s:"Vật lí",t:"Áp suất",f:"p = F : S",m:"F là áp lực (N), S là diện tích bị ép (m²), p là áp suất (Pa).",
+ gen(){const S=pick([0.5,1,2,4]),p=pick([100,200,500,1000]),F=p*S;return{q:`Áp lực ${fmt(F)} N tác dụng lên diện tích ${fmt(S)} m². Tính áp suất.`,a:p,u:"Pa",w:`p = ${fmt(F)} : ${fmt(S)} = ${p}`}}},
+{g:8,s:"Hóa học",t:"Số mol",f:"n = m : M",m:"m là khối lượng (g), M là khối lượng mol (g/mol), n là số mol.",
+ gen(){const c=pick([["nước (H₂O)",18],["khí cacbonic (CO₂)",44],["natri hiđroxit (NaOH)",40],["canxi cacbonat (CaCO₃)",100]]),n=pick([0.5,1,1.5,2,3]),m=n*c[1];return{q:`Có ${fmt(m)} g ${c[0]}, khối lượng mol là ${c[1]} g/mol. Tính số mol.`,a:n,u:"mol",w:`n = ${fmt(m)} : ${c[1]} = ${fmt(n)}`}}},
+{g:9,s:"Toán",t:"Thể tích hình cầu",f:"V = (4/3) × π × R³",m:"R là bán kính. Lấy π ≈ 3,14 và làm tròn đến 2 chữ số thập phân.",
+ gen(){const R=r(1,4),v=4/3*Math.PI*R**3;return{q:`Hình cầu có bán kính ${R} cm. Tính thể tích.`,a:v,u:"cm³",w:`V = 4/3 × π × ${R}³ ≈ ${fmt(v)}`}}},
+{g:9,s:"Vật lí",t:"Định luật Ôm",f:"I = U : R",m:"U là hiệu điện thế (V), R là điện trở (Ω), I là cường độ dòng điện (A).",
+ gen(){const R=pick([2,4,5,10,20]),I=pick([0.5,1,2,3]),U=I*R;return{q:`Điện trở ${R} Ω đặt vào hiệu điện thế ${fmt(U)} V. Tính cường độ dòng điện.`,a:I,u:"A",w:`I = ${fmt(U)} : ${R} = ${fmt(I)}`}}},
+{g:10,s:"Toán",t:"Tổ hợp",f:"C(n, k) = n! : (k! × (n − k)!)",m:"Số cách chọn k phần tử từ n phần tử, không xét thứ tự.",
+ gen(){const n=r(4,8),k=r(1,n-1),v=fact(n)/(fact(k)*fact(n-k));return{q:`Có bao nhiêu cách chọn ${k} bạn từ ${n} bạn?`,a:v,u:"cách",w:`C(${n}, ${k}) = ${n}! : (${k}! × ${n-k}!) = ${v}`}}},
+{g:10,s:"Vật lí",t:"Vận tốc trong chuyển động thẳng biến đổi đều",f:"v = v<sub>0</sub> + a × t",m:"v₀ là vận tốc ban đầu, a là gia tốc, t là thời gian.",
+ gen(){const v0=r(0,10),a=r(1,5),t=r(2,8);return{q:`Vật có vận tốc đầu ${v0} m/s, gia tốc ${a} m/s². Tính vận tốc sau ${t} s.`,a:v0+a*t,u:"m/s",w:`v = ${v0} + ${a} × ${t} = ${v0+a*t}`}}},
+{g:11,s:"Toán",t:"Số hạng tổng quát của cấp số cộng",f:"u<sub>n</sub> = u<sub>1</sub> + (n − 1) × d",m:"u₁ là số hạng đầu, d là công sai, n là số thứ tự của số hạng.",
+ gen(){const u=r(-5,10),d=r(1,6),n=r(5,12),v=u+(n-1)*d;return{q:`Cấp số cộng có số hạng đầu ${u}, công sai ${d}. Tính số hạng thứ ${n}.`,a:v,u:"",w:`u${n} = ${u} + (${n} − 1) × ${d} = ${v}`}}},
+{g:11,s:"Vật lí",t:"Định luật Coulomb",f:"F = k × |q<sub>1</sub> × q<sub>2</sub>| : r²",m:"k = 9×10⁹ N·m²/C². q là điện tích (C), r là khoảng cách (m).",
+ gen(){const a=r(1,5),b=r(1,5),d=pick([0.1,0.2,0.3,0.5]),F=9e9*a*1e-6*b*1e-6/(d*d);return{q:`Hai điện tích ${a} µC và ${b} µC đặt cách nhau ${fmt(d)} m trong chân không. Tính lực tương tác, làm tròn đến 2 chữ số thập phân.`,a:F,u:"N",w:`F = 9×10⁹ × ${a}×10⁻⁶ × ${b}×10⁻⁶ : ${fmt(d)}² ≈ ${fmt(F)}`}}},
+{g:12,s:"Toán",t:"Xác suất có điều kiện",f:"P(A | B) = P(A ∩ B) : P(B)",m:"Xác suất của A khi biết B đã xảy ra.",
+ gen(){const pb=pick([0.4,0.5,0.8]),c=pick([0.25,0.5,0.75]),ab=+(pb*c).toFixed(3);return{q:`Biết P(B) = ${fmt(pb)} và P(A ∩ B) = ${String(ab).replace(".",",")}. Tính P(A | B).`,a:c,u:"",w:`P(A | B) = ${String(ab).replace(".",",")} : ${fmt(pb)} = ${fmt(c)}`}}},
+{g:12,s:"Vật lí",t:"Định luật Boyle",f:"p<sub>1</sub> × V<sub>1</sub> = p<sub>2</sub> × V<sub>2</sub>",m:"Khí xác định ở nhiệt độ không đổi. p là áp suất, V là thể tích.",
+ gen(){const p1=pick([1,2,3]),V1=pick([4,6,8,12]),V2=pick([2,3,4,6,8,12].filter(x=>x!==V1)),p2=p1*V1/V2;return{q:`Khí có áp suất ${p1} atm, thể tích ${V1} lít. Giữ nhiệt độ không đổi, nén còn ${V2} lít. Tính áp suất mới, làm tròn đến 2 chữ số thập phân.`,a:p2,u:"atm",w:`p₂ = ${p1} × ${V1} : ${V2} ≈ ${fmt(p2)}`}}}
+,
+{g:1,s:"Toán",t:"Phép trừ trong phạm vi 20",f:"a − b = hiệu",m:"a là số bị trừ, b là số trừ.",
+ gen(){const a=r(5,20),b=r(1,a-1);return{q:`${a} − ${b} = ?`,a:a-b,u:"",w:`${a} − ${b} = ${a-b}`}}},
+{g:2,s:"Toán",t:"Phép chia (bảng chia 2 đến 5)",f:"a : b = thương",m:"Chia a thành các phần bằng nhau, mỗi phần có b.",
+ gen(){const b=r(2,5),k=r(1,10);return{q:`${b*k} : ${b} = ?`,a:k,u:"",w:`${b*k} : ${b} = ${k}`}}},
+{g:2,s:"Toán",t:"Chu vi hình tam giác",f:"P = a + b + c",m:"a, b, c là độ dài ba cạnh.",
+ gen(){const a=r(3,12),b=r(3,12),c=r(3,12);return{q:`Tam giác có ba cạnh ${a} cm, ${b} cm, ${c} cm. Tính chu vi.`,a:a+b+c,u:"cm",w:`P = ${a} + ${b} + ${c} = ${a+b+c}`}}},
+{g:3,s:"Toán",t:"Diện tích hình chữ nhật",f:"S = a × b",m:"a là chiều dài, b là chiều rộng.",
+ gen(){const a=r(4,15),b=r(2,a-1);return{q:`Hình chữ nhật dài ${a} cm, rộng ${b} cm. Tính diện tích.`,a:a*b,u:"cm²",w:`S = ${a} × ${b} = ${a*b}`}}},
+{g:3,s:"Toán",t:"Diện tích hình vuông",f:"S = a × a",m:"a là độ dài cạnh.",
+ gen(){const a=r(2,12);return{q:`Hình vuông có cạnh ${a} cm. Tính diện tích.`,a:a*a,u:"cm²",w:`S = ${a} × ${a} = ${a*a}`}}},
+{g:4,s:"Toán",t:"Trung bình cộng",f:"TBC = (a + b + c) : 3",m:"Cộng các số rồi chia cho số lượng số.",
+ gen(){const m=r(5,20),a=r(1,m),b=r(1,m),c=3*m-a-b;return{q:`Tìm trung bình cộng của ${a}, ${b} và ${c}.`,a:m,u:"",w:`(${a} + ${b} + ${c}) : 3 = ${m}`}}},
+{g:5,s:"Toán",t:"Diện tích hình thang",f:"S = (a + b) × h : 2",m:"a, b là hai đáy; h là chiều cao.",
+ gen(){const a=r(3,10),b=r(3,10),h=(a+b)%2?2*r(2,5):r(3,10),v=(a+b)*h/2;return{q:`Hình thang có hai đáy ${a} cm và ${b} cm, chiều cao ${h} cm. Tính diện tích.`,a:v,u:"cm²",w:`S = (${a} + ${b}) × ${h} : 2 = ${v}`}}},
+{g:5,s:"Toán",t:"Diện tích hình tròn",f:"S = r × r × 3,14",m:"r là bán kính.",
+ gen(){const x=r(2,10),v=+(x*x*3.14).toFixed(2);return{q:`Hình tròn có bán kính ${x} cm. Tính diện tích.`,a:v,u:"cm²",w:`S = ${x} × ${x} × 3,14 = ${fmt(v)}`}}},
+{g:5,s:"Toán",t:"Quãng đường",f:"s = v × t",m:"v là vận tốc, t là thời gian, s là quãng đường.",
+ gen(){const v=r(20,60),t=r(2,6);return{q:`Một xe đi với vận tốc ${v} km/giờ trong ${t} giờ. Tính quãng đường.`,a:v*t,u:"km",w:`s = ${v} × ${t} = ${v*t}`}}},
+{g:6,s:"Toán",t:"Lũy thừa",f:"aⁿ = a × a × … × a (n thừa số)",m:"a là cơ số, n là số mũ.",
+ gen(){const a=r(2,5),n=r(2,4),v=Math.pow(a,n);return{q:`Tính ${a}^${n}.`,a:v,u:"",w:`${a}^${n} = ${Array(n).fill(a).join(" × ")} = ${v}`}}},
+{g:6,s:"Vật lí",t:"Trọng lượng",f:"P = 10 × m",m:"m là khối lượng (kg), P là trọng lượng (N).",
+ gen(){const m=r(1,20);return{q:`Vật có khối lượng ${m} kg. Tính trọng lượng.`,a:10*m,u:"N",w:`P = 10 × ${m} = ${10*m}`}}},
+{g:7,s:"Toán",t:"Thể tích hình lăng trụ đứng",f:"V = S<sub>đáy</sub> × h",m:"S là diện tích đáy, h là chiều cao.",
+ gen(){const S=r(5,30),h=r(2,10);return{q:`Lăng trụ đứng có diện tích đáy ${S} cm², chiều cao ${h} cm. Tính thể tích.`,a:S*h,u:"cm³",w:`V = ${S} × ${h} = ${S*h}`}}},
+{g:7,s:"Vật lí",t:"Tốc độ",f:"v = s : t",m:"s là quãng đường, t là thời gian, v là tốc độ.",
+ gen(){const v=pick([2,3,4,5]),t=r(5,20);return{q:`Vật đi ${v*t} m trong ${t} s. Tính tốc độ.`,a:v,u:"m/s",w:`v = ${v*t} : ${t} = ${v}`}}},
+{g:8,s:"Vật lí",t:"Khối lượng riêng",f:"D = m : V",m:"m là khối lượng, V là thể tích, D là khối lượng riêng.",
+ gen(){const D=pick([1,2.7,7.8,0.8]),V=pick([2,4,5,10]),m=D*V;return{q:`Vật có khối lượng ${fmt(m)} g và thể tích ${V} cm³. Tính khối lượng riêng.`,a:D,u:"g/cm³",w:`D = ${fmt(m)} : ${V} = ${fmt(D)}`}}},
+{g:8,s:"Vật lí",t:"Công cơ học",f:"A = F × s",m:"F là lực (N), s là quãng đường (m), A là công (J).",
+ gen(){const F=r(10,100),s=r(2,10);return{q:`Lực ${F} N làm vật dịch chuyển ${s} m theo hướng của lực. Tính công.`,a:F*s,u:"J",w:`A = ${F} × ${s} = ${F*s}`}}},
+{g:8,s:"Hóa học",t:"Nồng độ phần trăm",f:"C% = (m<sub>ct</sub> : m<sub>dd</sub>) × 100%",m:"m_ct là khối lượng chất tan, m_dd là khối lượng dung dịch.",
+ gen(){const c=pick([10,20,25,40]),d=pick([100,200,250,400,500].filter(x=>x>c)),v=c/d*100;return{q:`Hòa tan ${c} g chất tan để được ${d} g dung dịch. Tính nồng độ phần trăm.`,a:v,u:"%",w:`C% = (${c} : ${d}) × 100 = ${fmt(v)}`}}},
+{g:8,s:"Toán",t:"Diện tích xung quanh hình chóp tứ giác đều",f:"S<sub>xq</sub> = p × d",m:"p là nửa chu vi đáy, d là độ dài trung đoạn.",
+ gen(){const a=r(2,8),d=r(3,10);return{q:`Hình chóp tứ giác đều có cạnh đáy ${a} cm, trung đoạn ${d} cm. Tính diện tích xung quanh.`,a:2*a*d,u:"cm²",w:`p = 4 × ${a} : 2 = ${2*a}; S = ${2*a} × ${d} = ${2*a*d}`}}},
+{g:8,s:"Toán",t:"Thể tích hình chóp",f:"V = (1/3) × S × h",m:"S là diện tích đáy, h là chiều cao.",
+ gen(){const S=3*r(2,8),h=r(3,9);return{q:`Hình chóp có diện tích đáy ${S} cm², chiều cao ${h} cm. Tính thể tích.`,a:S*h/3,u:"cm³",w:`V = (1/3) × ${S} × ${h} = ${S*h/3}`}}},
+{g:8,s:"Toán",t:"Bình phương của một tổng",f:"(a + b)² = a² + 2ab + b²",m:"Hằng đẳng thức đáng nhớ.",
+ gen(){const a=r(1,9),b=r(1,9);return{q:`Tính (${a} + ${b})² bằng hằng đẳng thức.`,a:(a+b)**2,u:"",w:`${a}² + 2×${a}×${b} + ${b}² = ${a*a} + ${2*a*b} + ${b*b} = ${(a+b)**2}`}}},
+{g:9,s:"Toán",t:"Hệ thức lượng: đường cao",f:"h² = b′ × c′",m:"h là đường cao ứng với cạnh huyền; b′, c′ là hình chiếu của hai cạnh góc vuông lên cạnh huyền.",
+ gen(){const[x,y,h]=pick([[2,8,4],[3,12,6],[4,9,6],[1,9,3],[4,16,8],[9,16,12]]);return{q:`Tam giác vuông có hai hình chiếu của cạnh góc vuông lên cạnh huyền dài ${x} cm và ${y} cm. Tính đường cao ứng với cạnh huyền.`,a:h,u:"cm",w:`h² = ${x} × ${y} = ${x*y}, nên h = ${h}`}}},
+{g:9,s:"Toán",t:"Biệt thức của phương trình bậc hai",f:"Δ = b² − 4ac",m:"Phương trình ax² + bx + c = 0 (a ≠ 0).",
+ gen(){const a=r(1,4),b=r(-6,6),c=r(-5,5);return{q:`Phương trình ${a}x² ${b<0?"−":"+"} ${Math.abs(b)}x ${c<0?"−":"+"} ${Math.abs(c)} = 0. Tính Δ.`,a:b*b-4*a*c,u:"",w:`Δ = (${b})² − 4 × ${a} × (${c}) = ${b*b-4*a*c}`}}},
+{g:9,s:"Vật lí",t:"Công suất điện",f:"P = U × I",m:"U là hiệu điện thế (V), I là cường độ dòng điện (A), P là công suất (W).",
+ gen(){const U=pick([6,12,110,220]),I=pick([0.5,1,2,5]);return{q:`Dụng cụ dùng hiệu điện thế ${U} V, dòng điện ${fmt(I)} A. Tính công suất.`,a:U*I,u:"W",w:`P = ${U} × ${fmt(I)} = ${fmt(U*I)}`}}},
+{g:9,s:"Vật lí",t:"Điện trở tương đương (mắc song song)",f:"R = (R<sub>1</sub> × R<sub>2</sub>) : (R<sub>1</sub> + R<sub>2</sub>)",m:"R₁, R₂ là hai điện trở mắc song song (Ω).",
+ gen(){const[x,y,z]=pick([[6,3,2],[4,4,2],[12,4,3],[6,6,3],[10,10,5],[20,5,4],[15,10,6]]);return{q:`Hai điện trở ${x} Ω và ${y} Ω mắc song song. Tính điện trở tương đương.`,a:z,u:"Ω",w:`R = (${x} × ${y}) : (${x} + ${y}) = ${z}`}}},
+{g:10,s:"Toán",t:"Khoảng cách giữa hai điểm",f:"AB = √((x<sub>B</sub> − x<sub>A</sub>)² + (y<sub>B</sub> − y<sub>A</sub>)²)",m:"Tọa độ A(xA; yA) và B(xB; yB) trong mặt phẳng.",
+ gen(){const[x,y,z]=pick([[3,4,5],[5,12,13],[6,8,10],[8,15,17]]),xa=r(-5,5),ya=r(-5,5),xb=xa+pick([-1,1])*x,yb=ya+pick([-1,1])*y;return{q:`Cho A(${xa}; ${ya}) và B(${xb}; ${yb}). Tính độ dài AB.`,a:z,u:"",w:`AB = √(${x*x} + ${y*y}) = √${z*z} = ${z}`}}},
+{g:10,s:"Toán",t:"Chỉnh hợp",f:"A(n, k) = n! : (n − k)!",m:"Số cách chọn k phần tử từ n phần tử và xếp thứ tự.",
+ gen(){const n=r(4,8),k=r(2,3),v=fact(n)/fact(n-k);return{q:`Có bao nhiêu cách chọn và xếp ${k} bạn vào ${k} chỗ từ ${n} bạn?`,a:v,u:"cách",w:`A(${n}, ${k}) = ${n}! : ${n-k}! = ${v}`}}},
+{g:10,s:"Vật lí",t:"Quãng đường trong chuyển động biến đổi đều",f:"s = v<sub>0</sub> × t + (1/2) × a × t²",m:"v₀ là vận tốc đầu, a là gia tốc, t là thời gian.",
+ gen(){const v0=r(0,10),a=pick([2,4]),t=r(2,6),s=v0*t+a*t*t/2;return{q:`Vật có vận tốc đầu ${v0} m/s, gia tốc ${a} m/s². Tính quãng đường đi được sau ${t} s.`,a:s,u:"m",w:`s = ${v0} × ${t} + (1/2) × ${a} × ${t}² = ${s}`}}},
+{g:10,s:"Vật lí",t:"Động năng",f:"W<sub>đ</sub> = (1/2) × m × v²",m:"m là khối lượng (kg), v là tốc độ (m/s), Wđ là động năng (J).",
+ gen(){const m=pick([2,4,6,8]),v=r(2,10),W=m*v*v/2;return{q:`Vật khối lượng ${m} kg chuyển động với tốc độ ${v} m/s. Tính động năng.`,a:W,u:"J",w:`Wđ = (1/2) × ${m} × ${v}² = ${W}`}}},
+{g:11,s:"Toán",t:"Số hạng tổng quát của cấp số nhân",f:"u<sub>n</sub> = u<sub>1</sub> × q<sup>n−1</sup>",m:"u₁ là số hạng đầu, q là công bội.",
+ gen(){const u=r(1,5),q=r(2,3),n=r(3,6),v=u*Math.pow(q,n-1);return{q:`Cấp số nhân có số hạng đầu ${u}, công bội ${q}. Tính số hạng thứ ${n}.`,a:v,u:"",w:`u${n} = ${u} × ${q}^${n-1} = ${v}`}}},
+{g:11,s:"Toán",t:"Đạo hàm của lũy thừa",f:"(xⁿ)′ = n × xⁿ⁻¹",m:"Đạo hàm của hàm số y = xⁿ.",
+ gen(){const n=r(2,5),a=r(1,3),v=n*Math.pow(a,n-1);return{q:`Cho f(x) = x^${n}. Tính f′(${a}).`,a:v,u:"",w:`f′(x) = ${n}x^${n-1}, nên f′(${a}) = ${n} × ${a}^${n-1} = ${v}`}}},
+{g:11,s:"Vật lí",t:"Tần số dao động",f:"f = 1 : T",m:"T là chu kì (s), f là tần số (Hz).",
+ gen(){const T=pick([0.5,0.2,0.25,0.1,0.05]),f=Math.round(1/T);return{q:`Dao động có chu kì ${fmt(T)} s. Tính tần số.`,a:f,u:"Hz",w:`f = 1 : ${fmt(T)} = ${f}`}}},
+{g:11,s:"Vật lí",t:"Cường độ điện trường đều",f:"E = U : d",m:"U là hiệu điện thế (V), d là khoảng cách dọc theo đường sức (m).",
+ gen(){const U=pick([100,200,400,600]),d=pick([0.1,0.2,0.5,2]),E=U/d;return{q:`Hiệu điện thế ${U} V giữa hai bản cách nhau ${fmt(d)} m. Tính cường độ điện trường.`,a:E,u:"V/m",w:`E = ${U} : ${fmt(d)} = ${fmt(E)}`}}},
+{g:12,s:"Toán",t:"Tích vô hướng của hai vectơ",f:"u · v = x<sub>1</sub>x<sub>2</sub> + y<sub>1</sub>y<sub>2</sub> + z<sub>1</sub>z<sub>2</sub>",m:"u = (x₁; y₁; z₁) và v = (x₂; y₂; z₂).",
+ gen(){const p=[r(-4,4),r(-4,4),r(-4,4)],w=[r(-4,4),r(-4,4),r(-4,4)],v=p[0]*w[0]+p[1]*w[1]+p[2]*w[2];return{q:`Cho u = (${p.join("; ")}) và v = (${w.join("; ")}). Tính u · v.`,a:v,u:"",w:`(${p[0]})(${w[0]}) + (${p[1]})(${w[1]}) + (${p[2]})(${w[2]}) = ${v}`}}},
+{g:12,s:"Toán",t:"Khoảng biến thiên của mẫu số liệu ghép nhóm",f:"R = đầu mút phải nhóm cuối − đầu mút trái nhóm đầu",m:"Đo độ trải rộng của mẫu số liệu.",
+ gen(){const a=r(0,10),b=a+r(20,60);return{q:`Đầu mút trái của nhóm đầu là ${a}, đầu mút phải của nhóm cuối là ${b}. Tính khoảng biến thiên.`,a:b-a,u:"",w:`R = ${b} − ${a} = ${b-a}`}}},
+{g:12,s:"Vật lí",t:"Định luật Charles",f:"V<sub>1</sub> : T<sub>1</sub> = V<sub>2</sub> : T<sub>2</sub>",m:"Khí xác định ở áp suất không đổi. T là nhiệt độ tuyệt đối (K).",
+ gen(){const V1=pick([2,3,4]),T1=pick([200,300,400]),T2=pick([250,350,450,500,600].filter(x=>x!==T1)),V2=V1*T2/T1;return{q:`Khí có thể tích ${V1} lít ở ${T1} K. Giữ áp suất không đổi, nung đến ${T2} K. Tính thể tích mới, làm tròn đến 2 chữ số thập phân.`,a:V2,u:"lít",w:`V₂ = ${V1} × ${T2} : ${T1} ≈ ${fmt(V2)}`}}},
+{g:12,s:"Vật lí",t:"Nhiệt lượng",f:"Q = m × c × Δt",m:"m là khối lượng (kg), c là nhiệt dung riêng (J/kg·K), Δt là độ tăng nhiệt độ.",
+ gen(){const m=pick([1,2,5]),dt=pick([10,20,50]),Q=m*4200*dt;return{q:`Đun ${m} kg nước (c = 4200 J/kg·K) tăng thêm ${dt} °C. Tính nhiệt lượng cần cung cấp.`,a:Q,u:"J",w:`Q = ${m} × 4200 × ${dt} = ${Q}`}}}
+,
+{g:2,s:"Toán",t:"Tìm số hạng chưa biết",f:"x + b = c  ⇒  x = c − b",m:"Muốn tìm số hạng chưa biết, lấy tổng trừ số hạng đã biết.",
+ gen(){const b=r(2,9),x=r(2,10);return{q:`x + ${b} = ${x+b}. Tìm x.`,a:x,u:"",w:`x = ${x+b} − ${b} = ${x}`}}},
+{g:3,s:"Toán",t:"Chu vi hình vuông",f:"P = a × 4",m:"a là độ dài một cạnh.",
+ gen(){const a=r(2,15);return{q:`Hình vuông có cạnh ${a} cm. Tính chu vi.`,a:a*4,u:"cm",w:`P = ${a} × 4 = ${a*4}`}}},
+{g:4,s:"Toán",t:"Diện tích hình thoi",f:"S = (m × n) : 2",m:"m, n là độ dài hai đường chéo.",
+ gen(){const m=2*r(2,8),n=r(3,12);return{q:`Hình thoi có hai đường chéo ${m} cm và ${n} cm. Tính diện tích.`,a:m*n/2,u:"cm²",w:`S = (${m} × ${n}) : 2 = ${m*n/2}`}}},
+{g:5,s:"Toán",t:"Thời gian chuyển động",f:"t = s : v",m:"s là quãng đường, v là vận tốc.",
+ gen(){const v=r(20,60),t=r(2,6);return{q:`Xe đi ${v*t} km với vận tốc ${v} km/giờ. Tính thời gian.`,a:t,u:"giờ",w:`t = ${v*t} : ${v} = ${t}`}}},
+{g:5,s:"Toán",t:"Tìm tỉ số phần trăm của một số",f:"a% của b = b × a : 100",m:"Muốn tìm a% của b, lấy b nhân a rồi chia 100.",
+ gen(){const a=pick([10,20,25,40,50,75]),b=pick([40,80,120,200,240]);return{q:`Tìm ${a}% của ${b}.`,a:b*a/100,u:"",w:`${b} × ${a} : 100 = ${b*a/100}`}}},
+{g:6,s:"Toán",t:"Số phần tử của tập hợp số tự nhiên liên tiếp",f:"Số phần tử = b − a + 1",m:"Tập hợp các số tự nhiên từ a đến b (a ≤ b).",
+ gen(){const a=r(1,20),b=a+r(3,25);return{q:`Tập hợp các số tự nhiên từ ${a} đến ${b} có bao nhiêu phần tử?`,a:b-a+1,u:"",w:`${b} − ${a} + 1 = ${b-a+1}`}}},
+{g:6,s:"Địa lí",t:"Khoảng cách thực tế theo tỉ lệ bản đồ",f:"Khoảng cách thực = khoảng cách trên bản đồ × mẫu số",m:"Tỉ lệ 1 : N nghĩa là 1 cm trên bản đồ ứng với N cm ngoài thực tế.",
+ gen(){const N=pick([100000,500000,1000000]),c=r(2,10);return{q:`Bản đồ tỉ lệ 1 : ${N}. Hai điểm cách nhau ${c} cm trên bản đồ. Tính khoảng cách thực tế.`,a:c*N/100000,u:"km",w:`${c} × ${N} cm = ${c*N} cm = ${c*N/100000} km`}}},
+{g:6,s:"Tin học",t:"Đổi đơn vị dung lượng",f:"1 KB = 1024 B",m:"Đổi từ KB sang B: nhân với 1024.",
+ gen(){const k=r(2,20);return{q:`${k} KB bằng bao nhiêu byte?`,a:k*1024,u:"B",w:`${k} × 1024 = ${k*1024}`}}},
+{g:7,s:"Toán",t:"Đại lượng tỉ lệ thuận",f:"y = k × x",m:"k là hệ số tỉ lệ.",
+ gen(){const k=r(2,9),x=r(2,12);return{q:`y tỉ lệ thuận với x theo hệ số k = ${k}. Tính y khi x = ${x}.`,a:k*x,u:"",w:`y = ${k} × ${x} = ${k*x}`}}},
+{g:7,s:"Địa lí",t:"Mật độ dân số",f:"Mật độ dân số = dân số : diện tích",m:"Đơn vị: người/km².",
+ gen(){const S=pick([50,100,200,500]),d=pick([30,80,120,250]);return{q:`Vùng có ${d*S} người sống trên diện tích ${S} km². Tính mật độ dân số.`,a:d,u:"người/km²",w:`${d*S} : ${S} = ${d}`}}},
+{g:8,s:"Vật lí",t:"Công suất",f:"P = A : t",m:"A là công (J), t là thời gian (s), P là công suất (W).",
+ gen(){const P=r(10,100),t=r(2,20);return{q:`Máy thực hiện công ${P*t} J trong ${t} s. Tính công suất.`,a:P,u:"W",w:`P = ${P*t} : ${t} = ${P}`}}},
+{g:8,s:"Vật lí",t:"Lực đẩy Archimedes",f:"F<sub>A</sub> = d × V",m:"d là trọng lượng riêng của chất lỏng (N/m³), V là thể tích phần vật chìm (m³).",
+ gen(){const v=pick([1,2,5,10]);return{q:`Vật thể tích ${v} dm³ chìm hoàn toàn trong nước (d = 10000 N/m³). Tính lực đẩy Archimedes.`,a:10*v,u:"N",w:`V = ${v/1000} m³, F = 10000 × ${v/1000} = ${10*v}`}}},
+{g:8,s:"Hóa học",t:"Thể tích khí ở điều kiện chuẩn",f:"V = 24,79 × n",m:"Ở 25 °C và 1 bar, 1 mol khí chiếm 24,79 lít. (Ở 0 °C, 1 atm là 22,4 lít.)",
+ gen(){const n=pick([1,2,3]);return{q:`Tính thể tích của ${n} mol khí ở điều kiện chuẩn (25 °C, 1 bar).`,a:24.79*n,u:"lít",w:`V = 24,79 × ${n} = ${fmt(24.79*n)}`}}},
+{g:8,s:"Hóa học",t:"Bảo toàn khối lượng",f:"m<sub>chất phản ứng</sub> = m<sub>sản phẩm</sub>",m:"Tổng khối lượng các chất phản ứng bằng tổng khối lượng các sản phẩm.",
+ gen(){const a=r(5,30),b=r(5,30),c=r(3,a+b-2);return{q:`Chất A (${a} g) phản ứng vừa đủ với chất B (${b} g), tạo ra chất C (${c} g) và chất D. Tính khối lượng D.`,a:a+b-c,u:"g",w:`m(D) = ${a} + ${b} − ${c} = ${a+b-c}`}}},
+{g:8,s:"Hóa học",t:"Phần trăm khối lượng nguyên tố",f:"%X = (khối lượng X trong 1 mol : M) × 100%",m:"M là khối lượng mol hợp chất. Làm tròn đến 2 chữ số thập phân.",
+ gen(){const c=pick([["H","H₂O",2,18],["C","CO₂",12,44],["Ca","CaCO₃",40,100],["Na","NaOH",23,40]]),v=c[2]/c[3]*100;return{q:`1 mol ${c[1]} (M = ${c[3]} g/mol) chứa ${c[2]} g ${c[0]}. Tính phần trăm khối lượng của ${c[0]}.`,a:v,u:"%",w:`(${c[2]} : ${c[3]}) × 100 ≈ ${fmt(v)}`}}},
+{g:9,s:"Toán",t:"Độ dài đường tròn",f:"C = 2 × π × R",m:"R là bán kính. Lấy π ≈ 3,14.",
+ gen(){const R=r(2,10),v=+(2*3.14*R).toFixed(2);return{q:`Đường tròn có bán kính ${R} cm. Tính độ dài (π ≈ 3,14).`,a:v,u:"cm",w:`C = 2 × 3,14 × ${R} = ${fmt(v)}`}}},
+{g:9,s:"Toán",t:"Tổng hai nghiệm (hệ thức Vi-ét)",f:"x<sub>1</sub> + x<sub>2</sub> = −b : a",m:"Phương trình ax² + bx + c = 0 có hai nghiệm x₁, x₂.",
+ gen(){const a=pick([1,2,3]),x1=r(-4,6),x2=r(-4,6),b=-a*(x1+x2),c=a*x1*x2;return{q:`Phương trình ${a}x² ${b<0?"−":"+"} ${Math.abs(b)}x ${c<0?"−":"+"} ${Math.abs(c)} = 0 có hai nghiệm. Tính tổng hai nghiệm.`,a:x1+x2,u:"",w:`x₁ + x₂ = −(${b}) : ${a} = ${x1+x2}`}}},
+{g:9,s:"Vật lí",t:"Điện năng tiêu thụ",f:"A = P × t",m:"P là công suất (kW), t là thời gian (giờ), A là điện năng (kWh).",
+ gen(){const P=pick([0.5,1,2]),t=r(2,10);return{q:`Thiết bị công suất ${fmt(P)} kW chạy ${t} giờ. Tính điện năng tiêu thụ.`,a:P*t,u:"kWh",w:`A = ${fmt(P)} × ${t} = ${fmt(P*t)}`}}},
+{g:9,s:"Vật lí",t:"Định luật Jun – Len-xơ",f:"Q = I² × R × t",m:"I là cường độ dòng điện (A), R là điện trở (Ω), t là thời gian (s), Q là nhiệt lượng (J).",
+ gen(){const I=r(1,5),R=r(2,10),t=r(10,60);return{q:`Dòng điện ${I} A chạy qua điện trở ${R} Ω trong ${t} s. Tính nhiệt lượng tỏa ra.`,a:I*I*R*t,u:"J",w:`Q = ${I}² × ${R} × ${t} = ${I*I*R*t}`}}},
+{g:9,s:"Hóa học",t:"Nồng độ mol",f:"C<sub>M</sub> = n : V",m:"n là số mol chất tan, V là thể tích dung dịch (lít).",
+ gen(){const n=pick([0.5,1,2,3]),V=pick([0.5,1,2]),C=n/V;return{q:`Hòa tan ${fmt(n)} mol chất tan vào dung dịch thể tích ${fmt(V)} lít. Tính nồng độ mol.`,a:C,u:"mol/L",w:`CM = ${fmt(n)} : ${fmt(V)} = ${fmt(C)}`}}},
+{g:9,s:"Sinh học",t:"Số loại giao tử",f:"2<sup>n</sup>",m:"Cơ thể dị hợp n cặp gen phân li độc lập cho 2ⁿ loại giao tử.",
+ gen(){const n=r(1,5);return{q:`Cơ thể dị hợp ${n} cặp gen phân li độc lập cho bao nhiêu loại giao tử?`,a:2**n,u:"loại",w:`2^${n} = ${2**n}`}}},
+{g:10,s:"Vật lí",t:"Thế năng trọng trường",f:"W<sub>t</sub> = m × g × h",m:"Lấy g = 10 m/s². h là độ cao so với mốc thế năng.",
+ gen(){const m=pick([1,2,5]),h=r(2,10);return{q:`Vật ${m} kg ở độ cao ${h} m so với mốc (g = 10 m/s²). Tính thế năng.`,a:m*10*h,u:"J",w:`Wt = ${m} × 10 × ${h} = ${m*10*h}`}}},
+{g:10,s:"Vật lí",t:"Định luật II Newton",f:"F = m × a",m:"m là khối lượng (kg), a là gia tốc (m/s²), F là hợp lực (N).",
+ gen(){const m=r(2,20),a=r(1,6);return{q:`Vật ${m} kg có gia tốc ${a} m/s². Tính hợp lực tác dụng lên vật.`,a:m*a,u:"N",w:`F = ${m} × ${a} = ${m*a}`}}},
+{g:10,s:"Hóa học",t:"Số neutron",f:"N = A − Z",m:"A là số khối, Z là số proton.",
+ gen(){const Z=r(3,26),A=2*Z+r(0,4);return{q:`Nguyên tử có số khối ${A} và số proton ${Z}. Tính số neutron.`,a:A-Z,u:"",w:`N = ${A} − ${Z} = ${A-Z}`}}},
+{g:10,s:"Hóa học",t:"Hiệu suất phản ứng",f:"H = (lượng thực tế : lượng lí thuyết) × 100%",m:"Lượng thực tế và lượng lí thuyết tính cùng đơn vị.",
+ gen(){const l=pick([20,40,50,80,100]),t=pick([0.5,0.6,0.75,0.8,0.9]),tt=l*t;return{q:`Lí thuyết thu được ${l} g sản phẩm, thực tế thu được ${fmt(tt)} g. Tính hiệu suất.`,a:t*100,u:"%",w:`H = (${fmt(tt)} : ${l}) × 100 = ${fmt(t*100)}`}}},
+{g:10,s:"Sinh học",t:"Số tế bào con sau nguyên phân",f:"Số tế bào con = a × 2<sup>n</sup>",m:"a là số tế bào mẹ, n là số lần nguyên phân.",
+ gen(){const a=r(1,4),n=r(2,5);return{q:`${a} tế bào nguyên phân liên tiếp ${n} lần. Tính số tế bào con.`,a:a*2**n,u:"tế bào",w:`${a} × 2^${n} = ${a*2**n}`}}},
+{g:10,s:"Địa lí",t:"Tỉ suất gia tăng dân số tự nhiên",f:"Tg = (tỉ suất sinh − tỉ suất tử) : 10",m:"Tỉ suất sinh, tử tính theo ‰; kết quả tính theo %.",
+ gen(){const s=r(12,30),t=r(3,9);return{q:`Tỉ suất sinh ${s}‰, tỉ suất tử ${t}‰. Tính tỉ suất gia tăng dân số tự nhiên.`,a:(s-t)/10,u:"%",w:`(${s} − ${t}) : 10 = ${fmt((s-t)/10)}`}}},
+{g:10,s:"Tin học",t:"Số nhị phân sang thập phân",f:"(b₃b₂b₁b₀)₂ = b₃×8 + b₂×4 + b₁×2 + b₀",m:"Mỗi chữ số nhị phân b là 0 hoặc 1.",
+ gen(){const b=[r(0,1),r(0,1),r(0,1),r(0,1)],v=b[0]*8+b[1]*4+b[2]*2+b[3];return{q:`Đổi số nhị phân ${b.join("")} sang hệ thập phân.`,a:v,u:"",w:`${b[0]}×8 + ${b[1]}×4 + ${b[2]}×2 + ${b[3]} = ${v}`}}},
+{g:11,s:"Vật lí",t:"Định luật Ôm cho toàn mạch",f:"I = E : (R + r)",m:"E là suất điện động (V), r là điện trở trong, R là điện trở mạch ngoài (Ω).",
+ gen(){const I=pick([0.5,1,2,3]),R=pick([2,4,5,9]),rr=pick([0.5,1,2]),E=I*(R+rr);return{q:`Nguồn có suất điện động ${fmt(E)} V, điện trở trong ${fmt(rr)} Ω nối với điện trở ${R} Ω. Tính cường độ dòng điện.`,a:I,u:"A",w:`I = ${fmt(E)} : (${R} + ${fmt(rr)}) = ${fmt(I)}`}}},
+{g:11,s:"Hóa học",t:"Độ pH",f:"pH = −lg[H⁺]",m:"[H⁺] là nồng độ ion H⁺ (mol/L).",
+ gen(){const k=r(1,13);return{q:`Dung dịch có [H⁺] = 10^−${k} mol/L. Tính pH.`,a:k,u:"",w:`pH = −lg(10^−${k}) = ${k}`}}},
+{g:11,s:"Toán",t:"Tổng n số hạng đầu của cấp số cộng",f:"S<sub>n</sub> = n × (2u<sub>1</sub> + (n − 1) × d) : 2",m:"u₁ là số hạng đầu, d là công sai.",
+ gen(){const u=r(1,8),d=r(1,5),n=r(4,10),v=n*(2*u+(n-1)*d)/2;return{q:`Cấp số cộng có u₁ = ${u}, công sai ${d}. Tính tổng ${n} số hạng đầu.`,a:v,u:"",w:`S = ${n} × (2×${u} + ${n-1}×${d}) : 2 = ${v}`}}},
+{g:11,s:"Toán",t:"Xác suất của biến cố đối",f:"P(Ā) = 1 − P(A)",m:"Ā là biến cố đối của A.",
+ gen(){const p=pick([0.1,0.25,0.3,0.4,0.65,0.8]);return{q:`Biết P(A) = ${fmt(p)}. Tính P(Ā).`,a:1-p,u:"",w:`P(Ā) = 1 − ${fmt(p)} = ${fmt(1-p)}`}}},
+{g:12,s:"Địa lí",t:"Cán cân thương mại",f:"Cán cân = giá trị xuất khẩu − giá trị nhập khẩu",m:"Kết quả dương là xuất siêu, âm là nhập siêu.",
+ gen(){const x=r(50,400),i=r(50,400);return{q:`Xuất khẩu ${x} tỉ USD, nhập khẩu ${i} tỉ USD. Tính cán cân thương mại.`,a:x-i,u:"tỉ USD",w:`${x} − ${i} = ${x-i}`}}},
+{g:12,s:"Địa lí",t:"Tỉ trọng (cơ cấu) theo phần trăm",f:"Tỉ trọng = (giá trị bộ phận : giá trị tổng) × 100%",m:"Làm tròn đến 2 chữ số thập phân.",
+ gen(){const t=pick([200,250,400,500]),p=r(30,t-20),v=p/t*100;return{q:`Tổng giá trị là ${t}, bộ phận chiếm ${p}. Tính tỉ trọng của bộ phận đó.`,a:v,u:"%",w:`(${p} : ${t}) × 100 ≈ ${fmt(v)}`}}},
+{g:12,s:"Sinh học",t:"Tổng số nuclêôtit của gen",f:"N = 2A + 2G",m:"A, G là số nuclêôtit loại A, G trên một mạch (A = T, G = X trên cả gen).",
+ gen(){const A=r(100,500),G=r(100,500);return{q:`Gen có A = ${A} và G = ${G}. Tính tổng số nuclêôtit.`,a:2*A+2*G,u:"",w:`N = 2×${A} + 2×${G} = ${2*A+2*G}`}}},
+{g:12,s:"Sinh học",t:"Chiều dài gen",f:"L = (N : 2) × 3,4 Å",m:"N là tổng số nuclêôtit, mỗi cặp nuclêôtit dài 3,4 Å.",
+ gen(){const N=pick([1200,1500,2000,3000]),L=N/2*3.4;return{q:`Gen có ${N} nuclêôtit. Tính chiều dài gen.`,a:L,u:"Å",w:`L = (${N} : 2) × 3,4 = ${fmt(L)}`}}},
+{g:12,s:"Sinh học",t:"Số liên kết hiđrô của gen",f:"H = 2A + 3G",m:"Cặp A–T có 2 liên kết hiđrô, cặp G–X có 3 liên kết hiđrô.",
+ gen(){const A=r(100,500),G=r(100,500);return{q:`Gen có A = ${A} và G = ${G}. Tính số liên kết hiđrô.`,a:2*A+3*G,u:"",w:`H = 2×${A} + 3×${G} = ${2*A+3*G}`}}},
+{g:12,s:"Sinh học",t:"Quần thể cân bằng Hardy – Weinberg",f:"p² + 2pq + q² = 1",m:"p, q là tần số alen A, a (p + q = 1). 2pq là tần số kiểu gen dị hợp Aa.",
+ gen(){const q=pick([0.1,0.2,0.3,0.4]),p=1-q,v=2*p*q;return{q:`Quần thể cân bằng, tần số alen a là ${fmt(q)}. Tính tần số kiểu gen Aa.`,a:v,u:"",w:`2pq = 2 × ${fmt(p)} × ${fmt(q)} = ${fmt(v)}`}}}
+];
+
+const GL={"Toán":"■","Vật lí":"●","Hóa học":"▲","Sinh học":"◆","Địa lí":"★","Tin học":"▼"};
+let grade=1,item=null,prob=null,ok=0,n=0,hist=[],mode="one",pool=[],thGrade=0,thSubj="",armed=false;
+
+/* ----- Lưu tiến độ trên thiết bị ----- */
+const KEY="ctld-stats-v1";
+let st={name:"",ok:0,n:0,subj:{}};
+try{const x=JSON.parse(localStorage.getItem(KEY)||"null");if(x&&typeof x==="object")st=Object.assign(st,x)}catch(e){}
+if(!st.subj||typeof st.subj!=="object")st.subj={};
+const saveSt=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+
+/* ----- Chuyển màn hình và menu dưới ----- */
+const VIEWS=["home","practice","thsetup","acct"];
+const TITLES={cong:["Công thức","Chọn lớp, xem công thức rồi làm đề tự sinh."],th:["Thực hành","Luyện tập trộn nhiều công thức."],tk:["Tài khoản","Tiến độ học của bạn trên thiết bị này."]};
+function go(id,tab){
+  VIEWS.forEach(v=>{$("#"+v).hidden=v!==id});
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.t===tab?"page":"false"));
+  $("#ttl").textContent=TITLES[tab][0];$("#sub").textContent=TITLES[tab][1];
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
+  const t=b.dataset.t;
+  if(t==="cong")go("home","cong");
+  else if(t==="th"){drawTh();go("thsetup","th")}
+  else{drawAcct();go("acct","tk")}
+}));
+
+/* ----- Tab Công thức ----- */
+function chip(box,label,on,fn){
+  const b=document.createElement("button");
+  b.textContent=label;b.setAttribute("aria-pressed",on);b.onclick=fn;box.appendChild(b);
+}
+function drawGrades(){
+  const box=$("#grades");box.innerHTML="";
+  for(let g=1;g<=12;g++)chip(box,"Lớp "+g,g===grade,()=>{grade=g;drawGrades();drawList()});
+}
+function drawList(){
+  const box=$("#list");box.innerHTML="";
+  $("#count").textContent="Lớp "+grade+" có "+F.filter(x=>x.g===grade).length+" công thức.";
+  F.forEach((x,i)=>{
+    if(x.g!==grade)return;
+    const c=document.createElement("div");c.className="card";
+    c.innerHTML='<h2></h2><p class="subj"></p><div class="f">'+x.f+'</div><p class="m"></p>';
+    c.querySelector("h2").textContent=x.t;
+    c.querySelector(".subj").textContent=(GL[x.s]||"◆")+" "+x.s+" lớp "+x.g;
+    c.querySelector(".m").textContent=x.m;
+    const b=document.createElement("button");b.className="primary";b.textContent="Làm đề";
+    b.onclick=()=>{mode="one";pool=[x];startPractice()};c.appendChild(b);box.appendChild(c);
+  });
+}
+
+/* ----- Tab Thực hành ----- */
+function drawTh(){
+  const g=$("#thg");g.innerHTML="";
+  for(let v=0;v<=12;v++)chip(g,v?"Lớp "+v:"Tất cả lớp",v===thGrade,()=>{thGrade=v;drawTh()});
+  const inGrade=F.filter(x=>!thGrade||x.g===thGrade);
+  const subjects=[...new Set(inGrade.map(x=>x.s))];
+  if(thSubj&&!subjects.includes(thSubj))thSubj="";
+  const sb=$("#ths");sb.innerHTML="";
+  ["",...subjects].forEach(v=>chip(sb,v||"Tất cả môn",v===thSubj,()=>{thSubj=v;drawTh()}));
+  const c=inGrade.filter(x=>!thSubj||x.s===thSubj).length;
+  $("#thc").textContent=c+" công thức phù hợp.";
+  $("#thgo").disabled=!c;
+}
+$("#thgo").onclick=()=>{
+  pool=F.filter(x=>(!thGrade||x.g===thGrade)&&(!thSubj||x.s===thSubj));
+  if(!pool.length)return;
+  mode="mix";startPractice();
+};
+
+/* ----- Màn làm đề ----- */
+function tally(){
+  $("#score").textContent="Đúng "+ok+" / "+n;
+  $("#tally").innerHTML=hist.slice(-12).map(v=>'<i class="'+(v?"y":"")+'"></i>').join("");
+}
+function startPractice(){
+  ok=0;n=0;hist=[];item=null;
+  go("practice",mode==="one"?"cong":"th");
+  next();
+}
+function next(){
+  let it=pool[0];
+  if(pool.length>1){for(let k=0;k<4;k++){it=pick(pool);if(it!==item)break}}
+  item=it;prob=item.gen();
+  $("#pt").textContent=item.t;
+  $("#ps").textContent=(GL[item.s]||"◆")+" "+item.s+" lớp "+item.g;
+  $("#pf").innerHTML=item.f;
+  $("#pq").textContent=prob.q;$("#pu").textContent=prob.u;
+  const inp=$("#in");inp.value="";inp.disabled=false;
+  $("#res").textContent="";$("#res").className="res";
+  $("#nx").hidden=true;$("#chk").disabled=false;
+  tally();inp.focus();
+}
+function check(){
+  if(!prob||$("#in").disabled)return;
+  const res=$("#res"),raw=$("#in").value.trim().replace(",",".");
+  if(raw===""||isNaN(Number(raw))){res.className="res bad";res.textContent="Hãy nhập một con số.";return}
+  const x=Number(raw),good=Math.abs(x-prob.a)<=Math.max(0.011,Math.abs(prob.a)*0.01);
+  n++;if(good)ok++;hist.push(good);
+  st.n++;if(good)st.ok++;
+  const sj=st.subj[item.s]||(st.subj[item.s]={ok:0,n:0});sj.n++;if(good)sj.ok++;
+  saveSt();
+  res.className="res "+(good?"ok":"bad");res.textContent="";
+  const b=document.createElement("b");b.textContent=good?"✓ Đúng.":"✗ Sai.";
+  res.append(b,document.createTextNode(good?prob.w:"Cách giải: "+prob.w+(prob.u?" "+prob.u:"")));
+  $("#in").disabled=true;$("#chk").disabled=true;$("#nx").hidden=false;$("#nx").focus();
+  tally();
+}
+$("#chk").onclick=check;
+$("#in").addEventListener("keydown",e=>{if(e.key==="Enter")check()});
+$("#nx").onclick=next;
+$("#back").onclick=()=>{if(mode==="one")go("home","cong");else{drawTh();go("thsetup","th")}};
+
+/* ----- Tab Tài khoản ----- */
+function drawAcct(){
+  $("#nm").value=st.name||"";
+  $("#hello").textContent=st.name?"Xin chào, "+st.name+".":"Bạn chưa đặt tên.";
+  $("#tot").textContent="Đã làm "+st.n+" câu, đúng "+st.ok+(st.n?" ("+Math.round(st.ok/st.n*100)+"%).":".");
+  const box=$("#bysub");box.innerHTML="";
+  const keys=Object.keys(st.subj);
+  if(!keys.length){const li=document.createElement("li");li.textContent="Chưa có dữ liệu. Hãy làm vài câu ở mục Thực hành.";box.appendChild(li)}
+  keys.forEach(k=>{const v=st.subj[k],li=document.createElement("li");li.textContent=k+": đúng "+v.ok+" / "+v.n;box.appendChild(li)});
+  armed=false;$("#rst").textContent="Xóa dữ liệu";
+}
+$("#sv").onclick=()=>{st.name=$("#nm").value.trim().slice(0,40);saveSt();drawAcct()};
+$("#rst").onclick=()=>{
+  if(!armed){armed=true;$("#rst").textContent="Bấm lần nữa để xóa hết";return}
+  st={name:"",ok:0,n:0,subj:{}};saveSt();drawAcct();
+};
+
+drawGrades();drawList();
+</script>
+</body>
+</html>
